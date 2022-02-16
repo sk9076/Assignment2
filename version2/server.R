@@ -2,6 +2,7 @@
 # Sooyoung Kim (sk9076@nyu.edu)
 
 ### Load packages
+require(pacman)
 pacman::p_load(shiny,
                shinyFeedback,
                shinyWidgets,
@@ -198,12 +199,12 @@ shinyServer(function(input, output, session) {
     ## Run linear regression
     
     model_formula <- reactive({
-        model_equation(input$outcome_var,
+        model_equation(temp$chosen_outcome,
                        input$predictor_set)
     })
     
     mod <- eventReactive(input$`2_3`, {
-        req(length(input$predictor_set) != 0)
+        req(length(input$predictor_set) != 0 & !is.null(temp$chosen_outcome))
         glm(eval(parse(text = model_formula())),
             data = rv$data)
     })
@@ -283,7 +284,7 @@ shinyServer(function(input, output, session) {
                 # all available models
                 add_rank_list(
                     input_id = "from",
-                    text = "Drag from here (plot supports max. 5 models)",
+                    text = "Drag from here",
                     labels = lapply(rv$res, function(x) x[[1]])
                 ),
                 add_rank_list(
@@ -396,7 +397,14 @@ shinyServer(function(input, output, session) {
     
     observeEvent(input$`1_2`, {
         req(input$`1_2`)
+        if(is.null(rv$data)){
+        shinyalert(
+            title = "Data not uploaded",
+            text = "Please upload data before proceeding",
+            type = "warning"
+        )}else{
         updateTabsetPanel(inputId = "steps", selected = "fit_model")
+        }
     })
     
     observeEvent(input$`2_1`, {
@@ -406,7 +414,7 @@ shinyServer(function(input, output, session) {
     
     observeEvent(input$`2_3`, {
         req(input$`2_3`)
-        if(length(input$predictor_set) == 0 | is.null(input$outcome_var)){
+        if(length(input$predictor_set) == 0 | is.null(temp$chosen_outcome)){
             shinyalert(
                 title = "Model not specified",
                 text = "Choose an outcome AND at least one predictor to proceed.",

@@ -2,6 +2,7 @@
 # Sooyoung Kim (sk9076@nyu.edu)
 
 ### Load packages
+require(pacman)
 pacman::p_load(
     shiny,
     shinyFeedback,
@@ -240,7 +241,7 @@ compare <- tabPanel(
     
     h4("Step 5. Compare the model fit using your choice of criteria"),
     
-    h5("Choose the models you want to compare"),
+    h5("Choose the models you want to compare (max. 5)"),
     uiOutput("choose_compare"),
     
     fluidRow(

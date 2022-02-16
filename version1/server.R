@@ -1,6 +1,7 @@
 # Assignment 2, Version 1
 # Sooyoung Kim (sk9076@nyu.edu)
 
+require(pacman)
 pacman::p_load(shiny,
                shinyFeedback,
                shinyWidgets,
