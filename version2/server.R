@@ -129,25 +129,19 @@ shinyServer(function(input, output, session) {
     # Filter out continuous variables from the data
     observeEvent(rv$data, {
         if(is.null(rv$data)){
-            rv$opt_outcome <- NULL
+            rv$opt_outcome <- ""
         }else{
             rv$opt_outcome <- colnames(rv$data)[unlist(lapply(rv$data, is_cont))]
         }
         updateSelectInput(inputId = "outcome_var",
                           choices = rv$opt_outcome
         )
-    })
+    }, ignoreNULL=F)
     
     no_contvar <- eventReactive(rv$opt_outcome,
                                 {length(rv$opt_outcome) == 0})
     
-    ### Update list of possible outcome variables to the UI
-    #observeEvent(rv$opt_outcome, {
-    #    updateSelectInput(inputId = "outcome_var",
-    #                      choices = rv$opt_outcome
-    #                    )
-    #})
-    
+
     # Warning when there's no cont. var in the dataset
     output$cont_warning <- renderText({
         if(is.null(input$outcome_var)|input$outcome_var==""){
@@ -170,7 +164,7 @@ shinyServer(function(input, output, session) {
     
     ## Update the UI to choose predictor sets
     observeEvent(temp$chosen_outcome, {
-        if(is.null(temp$chosen_outcome)|temp$chosen_outcome==""){
+        if(is.null(temp$chosen_outcome)){
             opt_predictor <- ""
         }else{
             # Populate the list of potential predictors based on the choice of outcome
@@ -182,7 +176,7 @@ shinyServer(function(input, output, session) {
         updateMultiInput(session = session,
                          inputId = "predictor_set",
                          choices = opt_predictor)
-    })
+    }, ignoreNULL=F)
     
     
     
@@ -240,13 +234,18 @@ shinyServer(function(input, output, session) {
     
     ## Updated the list of saved models
     observeEvent(rv$res, {
-        require(!is.null(rv$res))
+        if(!is.null(rv$res)){
         updateSelectInput(
             inputId = "saved_mods",
             choices = lapply(rv$res, function(x) x[[1]]),
             selected = lapply(rv$res, function(x) x[[1]])[1]
-        )
-    })
+        )}else{
+            updateSelectInput(
+                inputId = "saved_mods",
+                choices = ""
+            )
+        }
+    }, ignoreNULL=F)
     
     output$saved_sum_text <- renderText({
         req(rv$res)

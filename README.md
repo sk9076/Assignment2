@@ -3,6 +3,13 @@
 Sooyoung Kim (sk9076@nyu.edu)
 
 
+### Package requirement
+<b><font color = red>You need to have 'pacman' package for the apps to run successfully (pacman::p_load() install/loads all the required packages)</b></font>
+
+```
+install.packages('pacman')
+```
+
 ### Version 1
 
 <p>This application compares 2 separate linear regression fit of the models derived from the same dataset.
@@ -13,9 +20,8 @@ Sooyoung Kim (sk9076@nyu.edu)
 </ul>
 
 <p> Two models will share a <b> common outcome variable</b> of your choice. The model fit comparison will be
-conducted using the <b>the F-statistics</b> if two models are <u>nested</u> (meaning the predictor(s) of one
-model is a subset of the other model), or the <b>Alkaike Information Criterion (AIC)</b>
-if two models are <u>NOT</u> nested. </p>
+conducted using the the <b>Alkaike Information Criterion (AIC)</b>. If two models are nested (meaning the predictor(s) of one
+model is a subset of the other model), <b>the F-statistics</b> with p-value will also be computed.</p>
 
 <p>You can click the <b> Start </b> button to begin.</p>
 
@@ -37,9 +43,4 @@ if two models are <u>NOT</u> nested. </p>
  
 <P> You can click the <b> Start </b> button to begin.<br><br>
 
-### Pending issues I didn't get to resolve
 
-<p>There was one issue I couldn’t resolve and it was about triggering the fields to reset by “reset” button.
-I attached is the simplified reproducible example in the folder "reproducible_ex" for your information. Basically, when I click on the “reset” button, I can see that the values in rv$vars gets updated to NULL, but this does not trigger the update on selectInput, which is coded in lines 49-52.
-
-Is it a normal Shiny behavior that observeEvent does not respond to reactive value changes triggered within the server.R, not by the user input? What would be the alternative coding approach to make this happen?</p>

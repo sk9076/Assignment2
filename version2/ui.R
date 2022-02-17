@@ -338,7 +338,7 @@ shinyUI(
         
         
         # Set to use shinyjs
-        useShinyjs(),
+        shinyjs::useShinyjs(),
         
         fluidRow(column(12,
                         div(

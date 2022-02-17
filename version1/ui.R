@@ -37,9 +37,8 @@ intro <- tabPanel(
 
                         </ul>
          <p> Two models will share a <b> common outcome variable</b> of your choice. The model fit comparison will be
-         conducted using the <b>the F-statistics</b> if two models are <u>nested</u> (meaning the predictor(s) of one
-         model is a subset of the other model), or the <b>Alkaike Information Criterion (AIC)</b>
-         if two models are <u>NOT</u> nested. </p>
+            conducted using the the <b>Alkaike Information Criterion (AIC)</b>. If two models are nested (meaning the predictor(s) of one
+            model is a subset of the other model), <b>the F-statistics</b> with p-value will also be computed. </p>
          You can click the <b> Start </b> button to begin. Enjoy!<br>"
     ),
     
@@ -149,11 +148,19 @@ result <- tabPanel(
     textOutput("mod1"),
     textOutput("mod2"),
     
-    HTML("<br><b>R output</b><br>"),
-    verbatimTextOutput("results"),
+    HTML("<br><b>AIC</b><br>"),
+    verbatimTextOutput("results_aic"),
     
     HTML("<b>"),
     textOutput("interpret"),
+    HTML("</b><br>"),
+    
+    # optional F-stats if nested models are compared
+    HTML("<br><b>"),
+    uiOutput("title_anova"),
+    HTML("<br>"),
+    uiOutput("results_anova"),
+    uiOutput("interpret_anova"),
     HTML("</b><br>"),
     
     # Button to move to the previous/next step

@@ -157,10 +157,15 @@ shinyServer(function(input, output, session) {
     })
     
     ## Compare the fit
-    fit_compare <- reactive(if (compared() == "nested") {
-        anova(m1(), m2())
-    } else{
+    fit_compare <- reactive({
         AIC(m1(), m2())
+    })
+    
+    ## Compare the fit of nested model using F-stat
+    fit_compare_nested <- reactive({
+        if(compared()=="nested"){
+        anova(m1(), m2())
+        }else{NULL}
     })
     
     ## Print results
@@ -171,42 +176,58 @@ shinyServer(function(input, output, session) {
     output$mod2 <- renderText(paste0("Model 2: ",
                                      m2_formula()))
     
+    output$title_anova <- renderUI({
+        if(compared()=="nested"){
+            renderText({
+                "F-statistics (shows only when comparing nested model)"
+            })
+        }
+    })
     # Fit test results
-    output$results <- renderPrint({
+    output$results_aic <- renderPrint({
         fit_compare()
+    })
+    
+    output$results_anova <- renderUI({
+        if(compared()=="nested"){
+            renderPrint({
+                fit_compare_nested()
+            })}else{NULL}
+        
     })
     
     # Simple interpretaton
     output$interpret <- renderText({
         req(compared() %in% c("different", "nested"))
-        # For nested model
-        if (compared() == "nested") {
-            sprintf(
-                "Model %i has %s better fit to the data than Model %i. %s(p-value %.2f)",
-                ifelse(fit_compare()$RSS[1] > fit_compare()$RSS[2], 2, 1),
-                ifelse(
-                    fit_compare()$`Pr(>F)`[2] < 0.05,
-                    "significantly",
-                    ""
-                ),
-                ifelse(fit_compare()$RSS[1] > fit_compare()$RSS[2], 1, 2),
-                ifelse(
-                    fit_compare()$`Pr(>F)`[2] < 0.05,
-                    "",
-                    "\nHowever, the difference in fit is not statistically significant based on the F-statistics. "
-                ),
-                fit_compare()$`Pr(>F)`[2]
-            )
-        } else{
-            # For non-nested model
             sprintf(
                 "Model %i has better fit to the data than Model %i based on Akaike Information Criterion (AIC)",
                 ifelse(fit_compare()$AIC[1] > fit_compare()$AIC[2], 2, 1),
                 ifelse(fit_compare()$AIC[1] > fit_compare()$AIC[2], 1, 2)
             )
-        }
     })
     
+    # additional text for nested model
+    output$interpret_anova <- renderUI({
+        if (compared() == "nested") {
+            renderText({sprintf(
+                "Model %i has %s better fit to the data than Model %i. %s(p-value %.2f)",
+                ifelse(fit_compare_nested()$RSS[1] > fit_compare_nested()$RSS[2], 2, 1),
+                ifelse(
+                    fit_compare_nested()$`Pr(>F)`[2] < 0.05,
+                    "significantly",
+                    ""
+                ),
+                ifelse(fit_compare_nested()$RSS[1] > fit_compare_nested()$RSS[2], 1, 2),
+                ifelse(
+                    fit_compare_nested()$`Pr(>F)`[2] < 0.05,
+                    "",
+                    "\nHowever, the difference in fit is not statistically significant based on the F-statistics. "
+                ),
+                fit_compare_nested()$`Pr(>F)`[2]
+            )
+            })
+        }else{NULL}
+    })
     
     ## From here to the end is the step controls (simplify this by function)
     

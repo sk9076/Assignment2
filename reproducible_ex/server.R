@@ -1,4 +1,8 @@
-library(shiny)
+pacman::p_load(shiny,
+               shinyFeedback,
+               shinyWidgets,
+               shinyalert, 
+               tidyverse)
 
 ### Define helper functions
 # function to discern whether the variable is 'continuous'
@@ -47,9 +51,11 @@ shinyServer(function(input, output) {
     
     # Update select input << THIS IS WHAT DOES NOT FUNCTION!
     observeEvent(rv$vars, {
+      browser()
+      
         updateSelectInput(inputId = "vars",
-                          choices = rv$vars)
-    })
+                          choices = if(is.null(rv$vars)){""}else{rv$vars})
+    }, ignoreNULL = FALSE, ignoreInit = T) # ignoreNULL doesnt' solve the problem either...
     
     # Reset
     observeEvent(input$`reset`, {
@@ -59,10 +65,9 @@ shinyServer(function(input, output) {
     })
 
     observeEvent(rv$data, {
-        if(is.null(rv$data)){
-            rv$vars <- NULL
-        }else{
-            rv$vars <- colnames(rv$data)[unlist(lapply(rv$data, is_cont))]
-        }
-    })
+      browser()
+        req(!is.null(rv$data))
+      rv$vars <- colnames(rv$data)[unlist(lapply(rv$data, is_cont))]
+      
+    }, ignoreNULL = FALSE, ignoreInit = T) # ignoreNULL doesnt' solve the problem either...
 })

@@ -1,4 +1,9 @@
-library(shiny)
+pacman::p_load(shiny,
+               shinyFeedback,
+               shinyWidgets,
+               shinyalert, 
+               tidyverse)
+
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
